@@ -9,6 +9,9 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Rating from '../components/Rating.js';
 import { Helmet } from 'react-helmet-async';
+import LoadingBox from '../components/LoadingBox.js';
+import MessageBox from '../components/MessageBox.js';
+import { getError } from '../utils.js';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -43,15 +46,18 @@ function ProductScreen() {
         );
         dispatch({ type: 'FETCH_SUCCESS', payload: result.data });
       } catch (error) {
-        dispatch({ type: 'FETCH_FAIL', payload: error.message });
+        dispatch({ type: 'FETCH_FAIL', payload: getError(error) });
       }
 
       //setProducts(result.data);
     };
     fetchData();
   }, [slug]);
+
   return loading ? (
-    <div>Loading...</div>
+    <LoadingBox />
+  ) : error ? (
+    <MessageBox variant="danger">{error}</MessageBox>
   ) : error ? (
     <div>{error}</div>
   ) : (
