@@ -8,11 +8,11 @@ import Badge from 'react-bootstrap/Badge';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Rating from '../components/Rating.js';
-import { Helmet } from 'react-helmet-async';
 import LoadingBox from '../components/LoadingBox.js';
 import MessageBox from '../components/MessageBox.js';
 import { getError } from '../utils.js';
 import { Store } from '../Store.js';
+import './productscreen.css';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -56,10 +56,21 @@ function ProductScreen() {
   }, [slug]);
 
   const { state, dispatch: ctxDispatch } = useContext(Store);
-  const addToCartHandler = () => {
+  const { cart } = state;
+  const addToCartHandler = async () => {
+    const existItem = cart.cartItems.find((x) => x._id === product._id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+    const { data } = await axios.get(
+      `http://localhost:5000/api/products/${product._id}`
+    );
+
+    if (data.countInStock < quantity) {
+      window.alert('Sorry. The Product is out of stock');
+      return;
+    }
     ctxDispatch({
       type: 'CART_ADD_ITEM',
-      payload: { ...product, quantity: 1 },
+      payload: { ...product, quantity },
     });
   };
   return loading ? (
@@ -81,9 +92,7 @@ function ProductScreen() {
         <Col md={3}>
           <ListGroup variant="flush">
             <ListGroup.Item>
-              <Helmet>
-                <title>{product.name}</title>
-              </Helmet>
+              <div className="title">{product.name}</div>
             </ListGroup.Item>
             <ListGroup.Item>
               <Rating
