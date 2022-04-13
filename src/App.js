@@ -9,6 +9,7 @@ import Nav from 'react-bootstrap/esm/Nav';
 import { Store } from './Store.js';
 import { useContext } from 'react';
 import CartScreen from './screens/CartScreen.js';
+import { SigninScreen } from './screens/SigninScreen.js';
 function App() {
   const { state } = useContext(Store);
   const { cart } = state;
@@ -40,6 +41,7 @@ function App() {
             <Routes>
               <Route path="/product/:slug" element={<ProductScreen />} />
               <Route path="/cart" element={<CartScreen />} />
+              <Route path="/signin" element={<SigninScreen />} />
               <Route path="/" element={<HomeScreen />} />
             </Routes>
           </Container>
